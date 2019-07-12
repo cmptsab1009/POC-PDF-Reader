@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<div class="container">
+    <br>
+    <input type="file" id="fileupload" name="files" class="form-control" />
+    <h2>Basic Table</h2>
+    <div id="divtable" style="overflow-y:auto;height:500px;"></div>
+</div>
+<script src="~/Scripts/jquery.min.js"></script>
+<script src="~/Scripts/Comman.js"></script>
+<script>
+    $('#fileupload').change(function () {
+        var fileExtension = ['pdf'];
+        var filename = $('#fileupload').val();
+        if (filename.length == 0) {
+            alert("Please select a file.");
+            return false;
+        }
+        else {
+            var extension = filename.replace(/^.*\./, '');
+            if ($.inArray(extension, fileExtension) == -1) {
+                alert("Please select only pdf files.");
+                return false;
+            }
+        }
+        debugger;
+        var files = $("#fileupload").get(0).files;
+        var fileData = new FormData();
+
+        for (var i = 0; i < files.length; i++) {
+            fileData.append("fileInput", files[i]);
+        }
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: globalapp.baseUrl + "/Home/UploadFiles",
+            dataType: "json",
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data
+            data: fileData,
+            success: function (result, status, xhr) {
+                debugger;
+                $('#divtable').html(result.result);
+            },
+            error: function (xhr, status, error) {
+                debugger;
+                alert(error);
+            }
+        });
+    });
+</script>
